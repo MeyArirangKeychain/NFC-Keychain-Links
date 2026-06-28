@@ -2,19 +2,30 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Album Redirect</title>
+<title>Loading...</title>
+
+<style>
+/* ==========================================
+   FULL HIDE (NO VISUAL OUTPUT)
+   ========================================== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+</style>
 
 <script>
 
 // ==========================================
-// NFC Album Tracker
-//
-// This page:
-// 1. Attempts to obtain GPS location
-// 2. Sends visit data to Cloudflare Worker
-// 3. Redirects to Spotify album
-//
-// Update these values when needed.
+// CONFIGURATION
 // ==========================================
 
 const WORKER_URL =
@@ -24,114 +35,85 @@ const SPOTIFY_ALBUM_URL =
   "https://open.spotify.com/album/3ukkRHDHbN8tNRPKsGZR1h?si=50596d20d12446e4";
 
 // ==========================================
-// Send visit data to Cloudflare
+// SEND DATA
 // ==========================================
 
 async function logVisit(data) {
 
   try {
-
-    await fetch(
-      WORKER_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(data)
-      }
-    );
-
-  } catch (error) {
-
-    console.log(
-      "Tracking failed:",
-      error
-    );
-
+    await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+  } catch {
+    // silent fail
   }
-
 }
 
 // ==========================================
-// Redirect user to Spotify
+// REDIRECT
 // ==========================================
 
 function redirectToSpotify() {
-
-  window.location.replace(
-    SPOTIFY_ALBUM_URL
-  );
-
+  window.location.replace(SPOTIFY_ALBUM_URL);
 }
 
 // ==========================================
-// GPS Success
+// GPS SUCCESS
 // ==========================================
 
 function gpsSuccess(position) {
 
   logVisit({
-
     page: "album",
-
-    latitude:
-      position.coords.latitude,
-
-    longitude:
-      position.coords.longitude,
-
-    accuracy:
-      position.coords.accuracy
-
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude,
+    accuracy: position.coords.accuracy
   });
 
-  setTimeout(
-    redirectToSpotify,
-    500
-  );
-
+  setTimeout(redirectToSpotify, 300);
 }
 
 // ==========================================
-// GPS Denied or Failed
+// GPS ERROR
 // ==========================================
 
 function gpsError() {
 
   logVisit({
-
     page: "album"
-
   });
 
-  setTimeout(
-    redirectToSpotify,
-    500
-  );
-
+  setTimeout(redirectToSpotify, 300);
 }
 
 // ==========================================
-// Start
+// START IMMEDIATELY
 // ==========================================
 
-navigator.geolocation.getCurrentPosition(
-  gpsSuccess,
-  gpsError,
-  {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-  }
-);
+document.addEventListener("DOMContentLoaded", () => {
+
+  navigator.geolocation.getCurrentPosition(
+    gpsSuccess,
+    gpsError,
+    {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    }
+  );
+
+  // fallback safety
+  setTimeout(redirectToSpotify, 6000);
+
+});
 
 </script>
 
 </head>
-<body>
 
-  
-</body>
+<body></body>
 </html>
