@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Random Song</title>
+</head>
 
+<body>
+
+<script>
+
+    // ==========================================
+    // RANDOM SONG REDIRECT
+    // ==========================================
+    //
+    // Add or remove Spotify track URLs below.
+    // Every time this page is opened,
+    // one track is selected at random.
+    //
+    // Example:
+    // "https://open.spotify.com/track/xxxxxxxx"
+    //
+    // ==========================================
+
+    const songs = [
+
+        "https://open.spotify.com/track/TRACK_1",
+
+        "https://open.spotify.com/track/TRACK_2",
+
+        "https://open.spotify.com/track/TRACK_3",
+
+        "https://open.spotify.com/track/TRACK_4"
+
+    ];
+
+    // Generate a random index between
+    // 0 and songs.length - 1
+
+    const randomIndex =
+        Math.floor(Math.random() * songs.length);
+
+    // Select the corresponding song
+
+    const selectedSong =
+        songs[randomIndex];
+
+    // Redirect the browser
+
+    window.location.replace(selectedSong);
+
+</script>
+
+<!--
+    Fallback message.
+    Normally not visible because the redirect
+    happens instantly.
+-->
+
+Redirecting to a random song...
+
+</body>
+</html>
