@@ -1,40 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Album Redirect</title>
+<meta charset="UTF-8">
+<title>Album Redirect</title>
 
-    <script>
+<script>
 
-        // ==========================================
-        // STATIC ALBUM REDIRECT
-        // ==========================================
-        //
-        // This page redirects the user to the album.
-        // To change the destination in the future,
-        // simply replace the Spotify URL below.
-        //
-        // Example:
-        // https://open.spotify.com/album/xxxxxxxx
-        //
-        // ==========================================
+// ==========================================
+// NFC Album Tracker
+//
+// This page:
+// 1. Attempts to obtain GPS location
+// 2. Sends visit data to Cloudflare Worker
+// 3. Redirects to Spotify album
+//
+// Update these values when needed.
+// ==========================================
 
-        window.location.replace(
-            "https://open.spotify.com/album/3ukkRHDHbN8tNRPKsGZR1h"
-        );
+const WORKER_URL =
+  "YOUR_WORKER_URL";
 
-    </script>
+const SPOTIFY_ALBUM_URL =
+  "https://open.spotify.com/album/REPLACE_WITH_YOUR_ALBUM";
+
+// ==========================================
+// Send visit data to Cloudflare
+// ==========================================
+
+async function logVisit(data) {
+
+  try {
+
+    await fetch(
+      WORKER_URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify(data)
+      }
+    );
+
+  } catch (error) {
+
+    console.log(
+      "Tracking failed:",
+      error
+    );
+
+  }
+
+}
+
+// ==========================================
+// Redirect user to Spotify
+// ==========================================
+
+function redirectToSpotify() {
+
+  window.location.replace(
+    SPOTIFY_ALBUM_URL
+  );
+
+}
+
+// ==========================================
+// GPS Success
+// ==========================================
+
+function gpsSuccess(position) {
+
+  logVisit({
+
+    page: "album",
+
+    latitude:
+      position.coords.latitude,
+
+    longitude:
+      position.coords.longitude,
+
+    accuracy:
+      position.coords.accuracy
+
+  });
+
+  setTimeout(
+    redirectToSpotify,
+    500
+  );
+
+}
+
+// ==========================================
+// GPS Denied or Failed
+// ==========================================
+
+function gpsError() {
+
+  logVisit({
+
+    page: "album"
+
+  });
+
+  setTimeout(
+    redirectToSpotify,
+    500
+  );
+
+}
+
+// ==========================================
+// Start
+// ==========================================
+
+navigator.geolocation.getCurrentPosition(
+  gpsSuccess,
+  gpsError,
+  {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  }
+);
+
+</script>
 
 </head>
 <body>
 
-    <!--
-        Fallback message.
-        The user will normally never see this because
-        the redirect happens immediately.
-    -->
-
-    Redirecting to Spotify...
+Redirecting to Spotify...
 
 </body>
 </html>
